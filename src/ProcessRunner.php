@@ -171,6 +171,7 @@ class ProcessRunner extends \yii\base\Component implements IteratorAggregate
      * if we are in single threaded mode, wait for it to finish before moving on
      * @param string $command the command to exec
      * @param string $cwd
+     * @return void
      */
     public function runProcess( $command )
     {
@@ -216,7 +217,7 @@ class ProcessRunner extends \yii\base\Component implements IteratorAggregate
      * clean up defunct processes running in background
      * @return void
      */
-    protected function cleanUpProcs()
+    public function cleanUpProcs()
     {
         if ( is_array($this->procs) && ($cntProcs = count($this->procs)) > 0 ) {
 
@@ -244,7 +245,7 @@ class ProcessRunner extends \yii\base\Component implements IteratorAggregate
      * @param int $pid process pid
      * @return void
      */
-    protected function cleanUpProc(Process $process, $pid)
+    public function cleanUpProc(Process $process, $pid)
     {
         $process->checkTimeout();
 
@@ -282,7 +283,7 @@ class ProcessRunner extends \yii\base\Component implements IteratorAggregate
      * wait for all to finish
      * @return void
      */
-    protected function cleanUpAll( $signal = null, $propagate = false )
+    public function cleanUpAll( $signal = null, $propagate = false )
     {
         $this->stdout('Cleaning processes: ' . $this->getOpenedProcsCount() . PHP_EOL);
 
