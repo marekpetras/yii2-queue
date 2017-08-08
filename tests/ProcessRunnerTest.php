@@ -5,12 +5,13 @@ use Symfony\Component\Process\Process;
 
 class ProcessRunnerTest extends TestCase
 {
+    const CMD = 'ls > /dev/null';
     public function testRunnerRunSingle()
     {
         $runner = $this->getRunner();
         $this->assertEquals($runner->getIterator()->count(),0);
 
-        $runner->runProcess('ls -l');
+        $runner->runProcess(self::CMD);
 
         $this->assertEquals($runner->getIterator()->count(),1);
 
@@ -23,43 +24,26 @@ class ProcessRunnerTest extends TestCase
         $runner = $this->getRunner(2);
 
         $this->assertEquals($runner->getIterator()->count(),0);
-        $runner->runProcess('ls -l');
-        $runner->runProcess('ls -l');
+
+        $runner->runProcess(self::CMD);
+        $runner->runProcess(self::CMD);
+
         $this->assertEquals($runner->getIterator()->count(),2);
 
         $runner->cleanUpAll();
         $this->assertEquals($runner->getIterator()->count(),0);
-
     }
     public function testRunnerCleanUpProcess()
     {
-        $pid = 123;
         $runner = $this->getRunner();
 
-        $process = $this->createMock(Process::class);
-        $process->method('getPid')
-             ->willReturn($pid);
-
-        $process->method('checkTimeout')
-             ->willReturn(null);
-
-        $process->method('isRunning')
-             ->willReturn(false);
-
-        $process->method('getOutput')
-             ->willReturn('');
-
-        $process->method('getErrorOutput')
-             ->willReturn('');
-
-        $process->method('isSuccessful')
-             ->willReturn(true);
+        $process = new Process(self::CMD);
+        $process->run();
 
         $runner->addProcess($process);
-
         $this->assertEquals($runner->getIterator()->count(),1);
 
-        $runner->cleanUpProc($process, $pid);
+        $runner->cleanUpProc($process, $process->getPid());
 
         $this->assertEquals($runner->getIterator()->count(),0);
     }
@@ -68,9 +52,9 @@ class ProcessRunnerTest extends TestCase
         $runner = $this->getRunner(2);
         $start = time();
 
-        $runner->runProcess('setsid php -r "sleep(10);"');
+        $runner->runProcess('setsid php -r "sleep(10);" > /dev/null');
         $this->assertEquals($runner->getIterator()->count(),1);
-        $runner->runProcess('setsid php -r "sleep(10);"');
+        $runner->runProcess('setsid php -r "sleep(10);" > /dev/null');
         $this->assertEquals($runner->getIterator()->count(),2);
 
         $runner->cleanUpAll(SIGKILL, true);
