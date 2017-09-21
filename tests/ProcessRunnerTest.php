@@ -13,7 +13,7 @@ class ProcessRunnerTest extends TestCase
 
         $runner->runProcess(self::CMD);
 
-        $this->assertEquals($runner->getIterator()->count(),1);
+        $this->assertEquals($runner->getIterator()->count(),0);
 
         $runner->cleanUpAll();
 

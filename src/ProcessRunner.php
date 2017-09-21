@@ -181,7 +181,7 @@ class ProcessRunner extends \yii\base\Component implements IteratorAggregate
             $this->env
         );
 
-        $this->stdout('Running ' . $command . PHP_EOL);
+        $this->stdout('Running ' . $command . ' (mode: ' . ($this->getIsSingleThreaded() ? 'single' : 'multi') . ')' . PHP_EOL);
 
         $process->setTimeout($this->getTimeout());
         $process->setIdleTimeout($this->getIdleTimeout());
@@ -193,12 +193,16 @@ class ProcessRunner extends \yii\base\Component implements IteratorAggregate
 
             $this->stdout('Running in sync mode' . PHP_EOL);
 
+            $pid = $process->getPid();
+
             $process->wait(function($type,$data){
                 $method = 'std'.$type;
                 $this->{$method}($data);
             });
 
-            $this->cleanUpProc($process, $process->getPid());
+            $this->stdout('Done, cleaning:'  . $pid . PHP_EOL);
+
+            $this->cleanUpProc($process, $pid);
         }
     }
 
