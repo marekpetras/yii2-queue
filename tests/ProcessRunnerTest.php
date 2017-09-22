@@ -51,7 +51,7 @@ class ProcessRunnerTest extends TestCase
     {
         $runner = $this->getRunner(2);
         $start = time();
-
+	
         $runner->runProcess('setsid php -r "sleep(10);" > /dev/null');
         $this->assertEquals($runner->getIterator()->count(),1);
         $runner->runProcess('setsid php -r "sleep(10);" > /dev/null');

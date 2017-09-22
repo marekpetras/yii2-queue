@@ -294,10 +294,19 @@ class ProcessRunner extends \yii\base\Component implements IteratorAggregate
         while ( $this->getOpenedProcsCount() ) {
 
             foreach ( $this->procs as $pid => $process ) {
-
-                if ( $process->isRunning() && $propagate && $signal ) {
+                
+                if ( $process->isRunning()
+                    && $process->getPid()
+                    && $propagate
+                    && $signal )
+                {
                     $this->stdout(sprintf('Sending signal %d to pid %d', $signal, $pid) . PHP_EOL);
-                    $process->signal($signal);
+                    
+                    try {
+                        $process->signal($signal);
+                    } catch ( \Symfony\Component\Process\Exception\LogicException $e ) {
+                        $this->stdout('Process was already stopped.');
+                    }
                 }
 
                 $this->cleanUpProc($process, $pid);
