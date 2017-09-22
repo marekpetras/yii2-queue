@@ -294,7 +294,7 @@ class ProcessRunner extends \yii\base\Component implements IteratorAggregate
         while ( $this->getOpenedProcsCount() ) {
 
             foreach ( $this->procs as $pid => $process ) {
-                
+
                 if ( $process->isRunning()
                     && $process->getPid()
                     && $propagate
